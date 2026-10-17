@@ -177,7 +177,7 @@ function openModal(type,extra){
   const key=(String(extra||'').toLowerCase().includes('film')?'movies':String(extra||'').toLowerCase().includes('serij')?'series':'channels');
   openCatalog(key);return;
  }else if(type==='help'){
-  const hu=lang==='hu';
+  const hu=window.alexLanguage.get()==='hu';
   title.textContent=hu?'Telepítés és használat':'Instalacija i korišćenje';
   intro.textContent=hu?'Útmutató a SmartOne IPTV alkalmazás telepítéséhez és az ALEX IPTV szolgáltatás használatához.':'Uputstvo za instalaciju SmartOne IPTV aplikacije i korišćenje ALEX IPTV usluge.';
   body.innerHTML=hu?`<div class="guide">
@@ -204,7 +204,7 @@ function openModal(type,extra){
    <p class="small"><b>Važno:</b> SmartOne je aplikacija za reprodukciju i sam po sebi ne obezbeđuje TV kanale, filmove niti pretplatu. Koristi samo sadržaj za koji imaš ovlašćen pristup.</p>
   </div>`;
  }else if(type==='contact'){
-  const hu=lang==='hu';
+  const hu=window.alexLanguage.get()==='hu';
   title.textContent=hu?'Kapcsolat':'Kontakt';
   intro.textContent=hu?'Lépj kapcsolatba az ALEX IPTV ügyfélszolgálatával.':'Kontaktiraj ALEX IPTV podršku.';
   body.innerHTML=hu?`<div class="guide contact-guide"><p><b>E-mail:</b> <a href="mailto:alexiptvsrb@gmail.com">alexiptvsrb@gmail.com</a></p><a class="btn full" href="mailto:alexiptvsrb@gmail.com?subject=ALEX%20IPTV%20-%20%C3%89rdekl%C5%91d%C3%A9s">E-mail küldése</a><button class="btn full secondary" type="button" id="contactTest">Ingyenes próba kérése</button></div>`:`<div class="guide contact-guide"><p><b>E-mail:</b> <a href="mailto:alexiptvsrb@gmail.com">alexiptvsrb@gmail.com</a></p><a class="btn full" href="mailto:alexiptvsrb@gmail.com?subject=ALEX%20IPTV%20-%20Upit">POŠALJI E-MAIL</a><button class="btn full secondary" type="button" id="contactTest">ZATRAŽI BESPLATAN TEST</button></div>`;
