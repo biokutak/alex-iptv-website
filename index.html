@@ -61,7 +61,7 @@
 
 .lang-switch{position:fixed;right:16px;top:14px;z-index:50;display:flex;gap:4px;padding:5px;background:#06172be8;border:1px solid #1b5c8c;border-radius:12px;box-shadow:0 6px 22px #0008}.lang-switch button{border:0;border-radius:8px;padding:8px 10px;color:#d7eaff;background:transparent;font-weight:800;cursor:pointer}.lang-switch button.active{background:linear-gradient(110deg,#087df7,#3026ff);color:#fff}@media(max-width:650px){.lang-switch{top:8px;right:8px;padding:3px}.lang-switch button{padding:6px 8px;font-size:12px}}
 
-.guide h3{font-size:16px;margin:18px 0 8px;color:#8fc8ff}.guide p{line-height:1.65;margin:8px 0}.guide .btn{display:block;text-align:center;text-decoration:none;margin:12px 0;padding:12px;border-radius:10px;background:linear-gradient(110deg,#087df7,#3026ff);color:#fff;font-weight:800}.guide .small{font-size:12px;color:#a9bdd3;margin-top:18px}
+.guide h3{font-size:16px;margin:18px 0 8px;color:#8fc8ff}.guide p{line-height:1.65;margin:8px 0}.guide .btn{display:block;text-align:center;text-decoration:none;margin:12px 0;padding:12px;border-radius:10px;background:linear-gradient(110deg,#087df7,#3026ff);color:#fff;font-weight:800}.guide .small{font-size:12px;color:#a9bdd3;margin-top:18px}.guide a:not(.btn){color:#55c8ff;text-decoration:underline}.contact-guide p{font-size:15px;margin:18px 0}.contact-guide .btn{margin-top:12px}
 </style>
 </head>
 <body><div class="lang-switch" role="group" aria-label="Jezik sajta"><button type="button" data-lang="sr" class="active">SRB</button><button type="button" data-lang="hu">HU</button></div>
@@ -204,8 +204,10 @@ function openModal(type,extra){
    <p class="small"><b>Važno:</b> SmartOne je aplikacija za reprodukciju i sam po sebi ne obezbeđuje TV kanale, filmove niti pretplatu. Koristi samo sadržaj za koji imaš ovlašćen pristup.</p>
   </div>`;
  }else if(type==='contact'){
-  title.textContent='Kontakt';intro.textContent='Kontakt podaci još nisu podešeni.';
-  body.innerHTML='<p>Ovde se mogu dodati tvoj Telegram kontakt, e-mail ili broj telefona.</p><button class="btn full" id="contactTest">POŠALJI ZAHTEV ZA TEST</button>';
+  const hu=lang==='hu';
+  title.textContent=hu?'Kapcsolat':'Kontakt';
+  intro.textContent=hu?'Lépj kapcsolatba az ALEX IPTV ügyfélszolgálatával.':'Kontaktiraj ALEX IPTV podršku.';
+  body.innerHTML=hu?`<div class="guide contact-guide"><p><b>E-mail:</b> <a href="mailto:alexiptvsrb@gmail.com">alexiptvsrb@gmail.com</a></p><a class="btn full" href="mailto:alexiptvsrb@gmail.com?subject=ALEX%20IPTV%20-%20%C3%89rdekl%C5%91d%C3%A9s">E-mail küldése</a><button class="btn full secondary" type="button" id="contactTest">Ingyenes próba kérése</button></div>`:`<div class="guide contact-guide"><p><b>E-mail:</b> <a href="mailto:alexiptvsrb@gmail.com">alexiptvsrb@gmail.com</a></p><a class="btn full" href="mailto:alexiptvsrb@gmail.com?subject=ALEX%20IPTV%20-%20Upit">POŠALJI E-MAIL</a><button class="btn full secondary" type="button" id="contactTest">ZATRAŽI BESPLATAN TEST</button></div>`;
   document.getElementById('contactTest').addEventListener('click',()=>openModal('test'));
  }
  window.alexLanguage.apply(body);
