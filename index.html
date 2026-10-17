@@ -87,7 +87,7 @@
 (function(){
 const overlay=document.getElementById('overlay'), title=document.getElementById('modalTitle'), intro=document.getElementById('modalIntro'), body=document.getElementById('modalBody'), status=document.getElementById('status');
 let chosenPlan='3 meseca';
-const prices={'1 mesec':'1.000 RSD','3 meseca':'2.500 RSD','6 meseci':'4.000 RSD','12 meseci':'6.000 RSD'};
+const prices={'1 mesec':'1.000 RSD','3 meseca':'2.500 RSD','6 meseci':'5.000 RSD','12 meseci':'10.000 RSD'};
 function showStatus(msg){status.textContent=msg;status.classList.add('show')}
 function openModal(type,extra){
  status.classList.remove('show');body.innerHTML='';
@@ -102,11 +102,11 @@ function openModal(type,extra){
   intro.textContent=isTest?'Popuni podatke i pošalji zahtev za probni pristup.':isPackage?'Izaberi paket, a zatim ostavi kontakt podatke.':'Registruj se da bi mogao da zatražiš test ili paket.';
   if(isPackage)chosenPlan=extra||chosenPlan;
   body.innerHTML=(isPackage?'<div class="packages">'+Object.keys(prices).map(p=>'<button type="button" class="pkg '+(p===chosenPlan?'selected':'')+'" data-pkg="'+p+'"><strong>'+p+'</strong><span>'+prices[p]+'</span></button>').join('')+'</div>':'')+
-   '<form id="requestForm"><label class="field">Ime i prezime<input name="name" required autocomplete="name" placeholder="Ime i prezime"></label><label class="field">E-mail adresa<input type="email" name="email" required autocomplete="email" placeholder="ime@primer.rs"></label><label class="field">Telefon<input name="phone" required autocomplete="tel" placeholder="+381..."></label>'+(!isTest?'<label class="field">Lozinka<input type="password" name="password" minlength="6" required autocomplete="new-password" placeholder="Najmanje 6 znakova"></label>':'')+
+   '<form id="requestForm">'+(isTest?'':'<label class="field">Ime i prezime<input name="name" required autocomplete="name" placeholder="Ime i prezime"></label>')+'<label class="field">E-mail adresa<input type="email" name="email" required autocomplete="email" placeholder="ime@primer.rs"></label>'+(isTest?'':'<label class="field">Telefon<input name="phone" required autocomplete="tel" placeholder="+381..."></label>')+(!isTest?'<label class="field">Lozinka<input type="password" name="password" minlength="6" required autocomplete="new-password" placeholder="Najmanje 6 znakova"></label>':'')+
    '<button class="btn full" type="submit">'+(isTest?'POŠALJI ZAHTEV ZA TEST':isPackage?'POŠALJI ZAHTEV ZA PAKET':'REGISTRUJ SE')+'</button></form><p class="small">Ovo je lokalni demo. Podaci se ne šalju na server niti se pravi pravi IPTV nalog.</p>';
   body.querySelectorAll('[data-pkg]').forEach(b=>b.addEventListener('click',()=>{chosenPlan=b.dataset.pkg;body.querySelectorAll('[data-pkg]').forEach(x=>x.classList.toggle('selected',x===b))}));
   document.getElementById('requestForm').addEventListener('submit',e=>{
-   e.preventDefault();const fd=new FormData(e.currentTarget);const record={name:fd.get('name'),email:fd.get('email'),phone:fd.get('phone'),type:isTest?'Besplatan test':isPackage?'Paket':'Registracija',plan:isPackage?chosenPlan:null,createdAt:new Date().toISOString()};
+   e.preventDefault();const fd=new FormData(e.currentTarget);const record={name:fd.get('name')||null,email:fd.get('email'),phone:fd.get('phone')||null,type:isTest?'Besplatan test':isPackage?'Paket':'Registracija',plan:isPackage?chosenPlan:null,price:isPackage?prices[chosenPlan]:null,createdAt:new Date().toISOString()};
    try{const arr=JSON.parse(localStorage.getItem('alexIptvDemoRequests')||'[]');arr.push(record);localStorage.setItem('alexIptvDemoRequests',JSON.stringify(arr));}catch(_){}
    showStatus(isTest?'Demo zahtev za besplatan test je zabeležen u ovom pregledaču.':'Zahtev je zabeležen lokalno u ovom pregledaču. Ovo nije potvrda aktivacije niti plaćanja.');
   });
