@@ -60,6 +60,8 @@
 @media(max-width:420px){.catalog-grid{grid-template-columns:1fr}.catalog-card{padding:10px}}
 
 .lang-switch{position:fixed;right:16px;top:14px;z-index:50;display:flex;gap:4px;padding:5px;background:#06172be8;border:1px solid #1b5c8c;border-radius:12px;box-shadow:0 6px 22px #0008}.lang-switch button{border:0;border-radius:8px;padding:8px 10px;color:#d7eaff;background:transparent;font-weight:800;cursor:pointer}.lang-switch button.active{background:linear-gradient(110deg,#087df7,#3026ff);color:#fff}@media(max-width:650px){.lang-switch{top:8px;right:8px;padding:3px}.lang-switch button{padding:6px 8px;font-size:12px}}
+
+.guide h3{font-size:16px;margin:18px 0 8px;color:#8fc8ff}.guide p{line-height:1.65;margin:8px 0}.guide .btn{display:block;text-align:center;text-decoration:none;margin:12px 0;padding:12px;border-radius:10px;background:linear-gradient(110deg,#087df7,#3026ff);color:#fff;font-weight:800}.guide .small{font-size:12px;color:#a9bdd3;margin-top:18px}
 </style>
 </head>
 <body><div class="lang-switch" role="group" aria-label="Jezik sajta"><button type="button" data-lang="sr" class="active">SRB</button><button type="button" data-lang="hu">HU</button></div>
@@ -175,8 +177,32 @@ function openModal(type,extra){
   const key=(String(extra||'').toLowerCase().includes('film')?'movies':String(extra||'').toLowerCase().includes('serij')?'series':'channels');
   openCatalog(key);return;
  }else if(type==='help'){
-  title.textContent='Uputstva';intro.textContent='Osnovni koraci za početak korišćenja.';
-  body.innerHTML='<ol class="list"><li>Izaberi uređaj koji koristiš.</li><li>Zatraži test ili izaberi pretplatni paket.</li><li>Sačekaj ručnu potvrdu aktivacije od administratora.</li></ol><p class="small">Uputstva za konkretne aplikacije mogu se dodati u sledećoj verziji.</p>';
+  const hu=lang==='hu';
+  title.textContent=hu?'Telepítés és használat':'Instalacija i korišćenje';
+  intro.textContent=hu?'Útmutató a SmartOne IPTV alkalmazás telepítéséhez és az ALEX IPTV szolgáltatás használatához.':'Uputstvo za instalaciju SmartOne IPTV aplikacije i korišćenje ALEX IPTV usluge.';
+  body.innerHTML=hu?`<div class="guide">
+   <h3>1. Telepítsd a SmartOne IPTV alkalmazást</h3>
+   <p><b>Samsung TV:</b> nyisd meg az Apps / Smart Hub áruházat, keress rá a „SmartOne IPTV” névre, majd válaszd a Telepítés lehetőséget.</p>
+   <p><b>LG TV:</b> nyisd meg az LG Content Store-t, keress rá a „SmartOne IPTV” névre, majd telepítsd.</p>
+   <p><b>Android TV / Google TV és Fire TV:</b> ellenőrizd a készülék alkalmazás-áruházában, hogy elérhető-e az alkalmazás a modelledhez és régiódhoz.</p>
+   <p><a class="btn full" href="https://smartone-iptv.com/plugin/support_manager/knowledgebase" target="_blank" rel="noopener">Hivatalos SmartOne telepítési útmutatók</a></p>
+   <h3>2. Nyisd meg az alkalmazást</h3><p>Indítsd el a SmartOne IPTV-t a TV alkalmazáslistájából. Jegyezd fel a képernyőn megjelenő eszközazonosítót / MAC-címet, ha a beállítás során szükség van rá.</p>
+   <h3>3. Add hozzá az IPTV-listát</h3><p>Kövesd a szolgáltatótól kapott beállítási adatokat. Ha a SmartOne menüje M3U URL-t vagy Xtream Codes adatokat kér, csak a szolgáltató által megadott adatokat írd be, pontosan úgy, ahogy kaptad.</p>
+   <h3>4. Frissítsd a listát</h3><p>Mentsd a beállításokat, majd frissítsd a lejátszási listát vagy indítsd újra az alkalmazást. Ezután nyisd meg a Live TV, Movies vagy Series részt.</p>
+   <h3>5. ALEX IPTV teszt vagy csomag</h3><p>Az ALEX IPTV weboldalán kérhetsz ingyenes tesztet, vagy kiválaszthatsz egy előfizetési csomagot. Várd meg a szolgáltató visszaigazolását és a szükséges hozzáférési adatokat.</p>
+   <p class="small"><b>Fontos:</b> a SmartOne egy lejátszóalkalmazás, önmagában nem biztosít TV-csatornákat, filmeket vagy előfizetést. Csak olyan tartalmat használj, amelyhez jogosult hozzáféréssel rendelkezel.</p>
+  </div>`:`<div class="guide">
+   <h3>1. Instaliraj SmartOne IPTV</h3>
+   <p><b>Samsung TV:</b> otvori Apps / Smart Hub, potraži „SmartOne IPTV” i izaberi Install / Instaliraj.</p>
+   <p><b>LG TV:</b> otvori LG Content Store, potraži „SmartOne IPTV” i instaliraj aplikaciju.</p>
+   <p><b>Android TV / Google TV i Fire TV:</b> proveri prodavnicu aplikacija na uređaju i dostupnost aplikacije za svoj model i region.</p>
+   <p><a class="btn full" href="https://smartone-iptv.com/plugin/support_manager/knowledgebase" target="_blank" rel="noopener">Zvanična SmartOne uputstva za instalaciju</a></p>
+   <h3>2. Pokreni aplikaciju</h3><p>Pokreni SmartOne IPTV iz liste aplikacija na televizoru. Zapiši ID uređaja / MAC adresu koja se prikaže na ekranu ako bude potrebna za podešavanje.</p>
+   <h3>3. Dodaj IPTV listu</h3><p>Prati podatke za podešavanje koje dobiješ od svog IPTV provajdera. Ako SmartOne traži M3U URL ili Xtream Codes podatke, unesi samo podatke koje ti je provajder dao, tačno kako su napisani.</p>
+   <h3>4. Osveži listu</h3><p>Sačuvaj podešavanja, osveži playlistu ili ponovo pokreni aplikaciju. Zatim otvori Live TV, Movies ili Series.</p>
+   <h3>5. ALEX IPTV test ili paket</h3><p>Na sajtu ALEX IPTV zatraži besplatan test ili izaberi pretplatni paket. Sačekaj potvrdu i podatke za pristup od provajdera.</p>
+   <p class="small"><b>Važno:</b> SmartOne je aplikacija za reprodukciju i sam po sebi ne obezbeđuje TV kanale, filmove niti pretplatu. Koristi samo sadržaj za koji imaš ovlašćen pristup.</p>
+  </div>`;
  }else if(type==='contact'){
   title.textContent='Kontakt';intro.textContent='Kontakt podaci još nisu podešeni.';
   body.innerHTML='<p>Ovde se mogu dodati tvoj Telegram kontakt, e-mail ili broj telefona.</p><button class="btn full" id="contactTest">POŠALJI ZAHTEV ZA TEST</button>';
