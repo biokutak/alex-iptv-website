@@ -18,3 +18,11 @@ Ova verzija uklanja klikabilne tokove za registraciju i prijavu. Besplatan test 
 - Cene: 1 mesec 1.000 RSD; 3 meseca 2.500 RSD; 6 meseci 5.000 RSD; 12 meseci 10.000 RSD.
 
 Bot token mora ostati u Render Environment Variables. Ne stavljajte ga u HTML ili GitHub.
+
+
+## IPTV katalog
+
+- `catalog.json` sadrži katalog metapodataka izveden iz dostavljene M3U liste: zemlje/grupe kanala, kategorije filmova i serija i nazive sadržaja.
+- Frontend otvara KANALI → zemlja → kategorija → nazivi kanala; FILMOVI i SERIJE otvaraju kategorije pa naslove.
+- Katalog ne sadrži privatne reprodukcione URL-ove, korisničko ime ni lozinku.
+- Radi kao statički katalog; reprodukcija i sinhronizacija sa IPTV serverom nisu povezane. Neki veoma veliki VOD katalozi prikazuju ograničen broj naslova po kategoriji radi brzine.

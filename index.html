@@ -47,6 +47,18 @@
 .packages{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pkg{background:#0a2044;border:1px solid #1b4c86;border-radius:11px;padding:14px;cursor:pointer;color:#fff;text-align:left}.pkg strong{display:block;font-size:15px}.pkg span{display:block;color:#a9c5e7;font-size:12px;margin-top:6px}.pkg.selected{border-color:#18c7ff;box-shadow:0 0 0 2px #18c7ff35}
 .list{padding-left:18px;color:#d7e5f5;font-size:13px;line-height:1.8}.small{font-size:11px!important;color:#8fa8c7!important;margin-top:12px!important}
 @media(max-width:650px){.modal{padding:20px}.modal h2{font-size:21px}.nav-help,.nav-contact{display:none}}
+
+.catalog-search{width:100%;box-sizing:border-box;background:#020d1b;color:#fff;border:1px solid #1a4c70;border-radius:10px;padding:12px;margin:0 0 12px;font:inherit}
+.catalog-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;max-height:55vh;overflow:auto;padding:2px}
+.catalog-card{display:flex;align-items:center;gap:10px;text-align:left;background:linear-gradient(145deg,#0b2850,#08172e);border:1px solid #1c4d7d;border-radius:11px;color:#fff;padding:12px;cursor:pointer;min-width:0}
+.catalog-card:hover{border-color:#17c8ff;box-shadow:0 0 0 1px #17c8ff30}
+.catalog-card .flag{font-size:22px;flex:0 0 auto}.catalog-card strong{font-size:12px;display:block;overflow-wrap:anywhere}.catalog-card small{display:block;color:#9eb8d8;font-size:10px;margin-top:4px}
+.catalog-list{max-height:55vh;overflow:auto;border:1px solid #173d61;border-radius:10px}
+.catalog-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid #14314e;color:#e5f2ff;font-size:12px}.catalog-row:last-child{border-bottom:0}.catalog-row .num{color:#48cfff;font-size:10px;min-width:22px}
+.catalog-back{margin:0 0 12px;background:transparent;color:#9edfff;border:1px solid #245d86;border-radius:9px;padding:9px 12px;cursor:pointer;font-weight:700}
+.catalog-note{font-size:11px;color:#90aaca;margin-top:12px;line-height:1.5}
+@media(max-width:420px){.catalog-grid{grid-template-columns:1fr}.catalog-card{padding:10px}}
+
 </style>
 </head>
 <body>
@@ -125,9 +137,8 @@ function openModal(type,extra){
   body.innerHTML='<div class="packages">'+Object.keys(prices).map(p=>'<button type="button" class="pkg" data-pkg="'+p+'"><strong>'+p+'</strong><span>'+prices[p]+'</span></button>').join('')+'</div><p class="small">Izbor paketa otvara zahtev za narudžbinu.</p>';
   body.querySelectorAll('[data-pkg]').forEach(b=>b.addEventListener('click',()=>openModal('package',b.dataset.pkg)));
  }else if(type==='category'){
-  title.textContent=extra||'IPTV sadržaj';intro.textContent='Ova kategorija je prikazana u dizajnu početne stranice.';
-  body.innerHTML='<ul class="list"><li>Pregled kategorije: '+(extra||'IPTV sadržaj')+'</li><li>Sadržaj i reprodukcija kanala još nisu povezani.</li></ul><button class="btn full" id="categoryTest">ZATRAŽI BESPLATAN TEST</button>';
-  document.getElementById('categoryTest').addEventListener('click',()=>openModal('test'));
+  const key=(String(extra||'').toLowerCase().includes('film')?'movies':String(extra||'').toLowerCase().includes('serij')?'series':'channels');
+  openCatalog(key);return;
  }else if(type==='help'){
   title.textContent='Uputstva';intro.textContent='Osnovni koraci za početak korišćenja.';
   body.innerHTML='<ol class="list"><li>Izaberi uređaj koji koristiš.</li><li>Zatraži test ili izaberi pretplatni paket.</li><li>Sačekaj ručnu potvrdu aktivacije od administratora.</li></ol><p class="small">Uputstva za konkretne aplikacije mogu se dodati u sledećoj verziji.</p>';
@@ -136,6 +147,40 @@ function openModal(type,extra){
   body.innerHTML='<p>Ovde se mogu dodati tvoj Telegram kontakt, e-mail ili broj telefona.</p><button class="btn full" id="contactTest">POŠALJI ZAHTEV ZA TEST</button>';
   document.getElementById('contactTest').addEventListener('click',()=>openModal('test'));
  }
+}
+let catalogData=null,catalogKind='channels',catalogPath=[],catalogSearch='';
+const countryFlags={'Srbija':'🇷🇸','Mađarska':'🇭🇺','Hrvatska':'🇭🇷','Bosna i Hercegovina':'🇧🇦','Crna Gora':'🇲🇪','Slovenija':'🇸🇮','Severna Makedonija':'🇲🇰','Nemačka':'🇩🇪','Francuska':'🇫🇷','Italija':'🇮🇹','Španija':'🇪🇸','Velika Britanija':'🇬🇧','SAD':'🇺🇸','Turska':'🇹🇷','Poljska':'🇵🇱','Grčka':'🇬🇷','Holandija':'🇳🇱','Indija':'🇮🇳','Arapski sadržaj':'🌍','Balkan / Ex-Yu':'🌍','Ostale zemlje':'🌐'};
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function loadCatalog(){if(catalogData)return catalogData;const r=await fetch('./catalog.json',{cache:'no-cache'});if(!r.ok)throw new Error('Katalog nije pronađen. Proveri da li je catalog.json postavljen na hosting.');catalogData=await r.json();return catalogData}
+function openCatalog(kind){catalogKind=kind;catalogPath=[];catalogSearch='';status.classList.remove('show');overlay.classList.add('open');renderCatalog()}
+function renderCatalog(){
+ title.textContent=catalogKind==='channels'?'TV kanali':catalogKind==='movies'?'Filmovi':'Serije';
+ const kindLabel=catalogKind==='channels'?'državu, zatim kategoriju i kanal':catalogKind==='movies'?'kategoriju filmova':'kategoriju serija';
+ intro.textContent='Izaberi '+kindLabel+'.';
+ body.innerHTML='<div id="catalogMount"><p class="small">Učitavanje kataloga…</p></div>';
+ loadCatalog().then(data=>{
+  const mount=document.getElementById('catalogMount');if(!mount)return;
+  const search='<input class="catalog-search" id="catalogSearch" type="search" placeholder="Pretraži '+(catalogKind==='channels'?'zemlje i kanale':catalogKind==='movies'?'filmove':'serije')+'…" value="'+esc(catalogSearch)+'">';
+  let html=search;
+  if(catalogPath.length){html+='<button class="catalog-back" type="button" data-catalog-back>← Nazad</button>';}
+  if(catalogKind==='channels'){
+   const countries=Object.keys(data.channels||{}).sort((a,b)=>a.localeCompare(b,'sr'));
+   if(catalogPath.length===0){const filtered=countries.filter(c=>c.toLowerCase().includes(catalogSearch.toLowerCase()));html+='<div class="catalog-grid">'+filtered.map(c=>'<button class="catalog-card" data-catalog-country="'+esc(c)+'"><span class="flag">'+(countryFlags[c]||'🌐')+'</span><span><strong>'+esc(c)+'</strong><small>'+Object.values(data.channels[c]||{}).reduce((n,arr)=>n+arr.length,0)+' prikazanih stavki</small></span></button>').join('')+'</div>';}
+   else if(catalogPath.length===1){const country=catalogPath[0];const groups=Object.keys((data.channels||{})[country]||{}).sort((a,b)=>a.localeCompare(b,'sr'));const filtered=groups.filter(g=>(g+' '+country).toLowerCase().includes(catalogSearch.toLowerCase()));html+='<div class="catalog-grid">'+filtered.map(g=>'<button class="catalog-card" data-catalog-group="'+esc(g)+'"><span class="flag">📺</span><span><strong>'+esc(g)+'</strong><small>'+((data.channels[country][g]||[]).length)+' kanala/stavki</small></span></button>').join('')+'</div>';}
+   else {const country=catalogPath[0],group=catalogPath[1];const names=((data.channels[country]||{})[group]||[]).filter(n=>n.toLowerCase().includes(catalogSearch.toLowerCase()));html+='<div class="catalog-list">'+names.map((n,i)=>'<div class="catalog-row"><span class="num">'+String(i+1).padStart(2,'0')+'</span><span>'+esc(n)+'</span></div>').join('')+'</div>';}
+  }else{
+   const source=data[catalogKind]||{};const groups=Object.keys(source).sort((a,b)=>a.localeCompare(b,'sr'));
+   if(catalogPath.length===0){const filtered=groups.filter(g=>g.toLowerCase().includes(catalogSearch.toLowerCase()));html+='<div class="catalog-grid">'+filtered.map(g=>'<button class="catalog-card" data-catalog-group="'+esc(g)+'"><span class="flag">'+(catalogKind==='movies'?'🎬':'📺')+'</span><span><strong>'+esc(g)+'</strong><small>'+source[g].length+' prikazanih naslova</small></span></button>').join('')+'</div>';}
+   else {const group=catalogPath[0];const names=(source[group]||[]).filter(n=>n.toLowerCase().includes(catalogSearch.toLowerCase()));html+='<div class="catalog-list">'+names.map((n,i)=>'<div class="catalog-row"><span class="num">'+String(i+1).padStart(2,'0')+'</span><span>'+esc(n)+'</span></div>').join('')+'</div>';}
+  }
+  html+='<p class="catalog-note">Prikazuju se nazivi i kategorije iz učitane liste. Reprodukcioni linkovi i podaci za prijavu nisu izloženi na sajtu.</p><button class="btn full" type="button" id="catalogTest">ZATRAŽI BESPLATAN TEST</button>';
+  mount.innerHTML=html;
+  const inp=document.getElementById('catalogSearch');if(inp)inp.addEventListener('input',()=>{catalogSearch=inp.value;const cursor=inp.selectionStart;renderCatalog();const again=document.getElementById('catalogSearch');if(again){again.focus();again.setSelectionRange(cursor,cursor)}});
+  mount.querySelector('[data-catalog-back]')?.addEventListener('click',()=>{catalogPath.pop();catalogSearch='';renderCatalog()});
+  mount.querySelectorAll('[data-catalog-country]').forEach(b=>b.addEventListener('click',()=>{catalogPath=[b.dataset.catalogCountry];catalogSearch='';renderCatalog()}));
+  mount.querySelectorAll('[data-catalog-group]').forEach(b=>b.addEventListener('click',()=>{catalogPath.push(b.dataset.catalogGroup);catalogSearch='';renderCatalog()}));
+  document.getElementById('catalogTest')?.addEventListener('click',()=>openModal('test'));
+ }).catch(err=>{const mount=document.getElementById('catalogMount');if(mount)mount.innerHTML='<p class="small">'+esc(err.message)+'</p><button class="btn full" type="button" id="catalogTest">ZATRAŽI BESPLATAN TEST</button>';document.getElementById('catalogTest')?.addEventListener('click',()=>openModal('test'))});
 }
 document.addEventListener('click',e=>{
  const a=e.target.closest('[data-action]');if(!a)return;
