@@ -1,0 +1,10 @@
+{
+  "name": "alex-iptv-website-telegram",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ALEX IPTV static website with secure Telegram request notifications",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=20" },
+  "dependencies": { "express": "^4.21.2" }
+}
