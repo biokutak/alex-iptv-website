@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://alex-iptv-website.onrender.com/sitemap.xml
