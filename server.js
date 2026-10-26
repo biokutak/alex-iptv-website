@@ -4,6 +4,24 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 10000;
 app.disable('x-powered-by');
+
+// Allow the public website to submit requests to this Telegram API service.
+const allowedOrigin = 'https://alex-iptv-website.onrender.com';
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin === allowedOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  }
+  if (req.method === 'OPTIONS' && req.path === '/api/telegram-request') {
+    if (origin !== allowedOrigin) return res.sendStatus(403);
+    return res.sendStatus(204);
+  }
+  next();
+});
+
 app.use(express.json({ limit: '20kb' }));
 app.use(express.static(path.join(__dirname)));
 
