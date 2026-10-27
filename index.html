@@ -275,5 +275,27 @@ overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.rem
 document.addEventListener('keydown',e=>{if(e.key==='Escape')overlay.classList.remove('open')});
 })();
 </script>
+
+<style>
+#alex-visit-counter{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;padding:14px 12px 22px;margin:0 auto;color:rgba(255,255,255,.72);font:500 12px/1.5 system-ui,sans-serif;text-align:center}
+#alex-visit-counter .visit-stat{display:inline-flex;align-items:center;gap:7px}
+#alex-visit-counter strong{color:rgba(255,255,255,.94);font-size:13px;font-variant-numeric:tabular-nums}
+</style>
+<div id="alex-visit-counter" aria-label="Statistika poseta" role="status">
+  <span class="visit-stat">Ukupno poseta: <strong id="alex-total-visits">—</strong></span>
+  <span class="visit-stat">Današnje posete: <strong id="alex-today-visits">—</strong></span>
+</div>
+<script>
+(function(){
+  const total=document.getElementById('alex-total-visits');
+  const today=document.getElementById('alex-today-visits');
+  if(!total||!today)return;
+  fetch('/api/visit-stats',{cache:'no-store',credentials:'same-origin'})
+    .then(r=>{if(!r.ok)throw new Error('Statistika nije dostupna');return r.json()})
+    .then(s=>{if(Number.isSafeInteger(s.total)&&Number.isSafeInteger(s.today)){total.textContent=s.total.toLocaleString('sr-RS');today.textContent=s.today.toLocaleString('sr-RS')}})
+    .catch(()=>{total.textContent='—';today.textContent='—'});
+})();
+</script>
+
 </body>
 </html>

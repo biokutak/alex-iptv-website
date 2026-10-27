@@ -26,3 +26,10 @@ Bot token mora ostati u Render Environment Variables. Ne stavljajte ga u HTML il
 - Frontend otvara KANALI → zemlja → kategorija → nazivi kanala; FILMOVI i SERIJE otvaraju kategorije pa naslove.
 - Katalog ne sadrži privatne reprodukcione URL-ove, korisničko ime ni lozinku.
 - Radi kao statički katalog; reprodukcija i sinhronizacija sa IPTV serverom nisu povezane. Neki veoma veliki VOD katalozi prikazuju ograničen broj naslova po kategoriji radi brzine.
+
+
+## Brojač poseta sajta
+
+Brojač je deo isključivo ovog ALEX IPTV WEB SAJTA. Ne povezuje se sa IPTV panelom, IPTV korisnicima, kanalima niti pretplatama. Koristi zaseban fajl `visit-stats.json`.
+
+Za trajno čuvanje na Render-u, dodaj persistent disk ovom web servisu (mount path `/var/data`) i environment variable `COUNTER_DATA_DIR=/var/data`. Bez persistent diska, Render može obrisati lokalne podatke pri novom deploy-u ili restartu. Poseta iz istog pregledača broji se najviše jednom dnevno pomoću first-party cookie-ja; „ukupno” je zbir takvih dnevnih poseta, ne procena stvarnog broja različitih ljudi.
