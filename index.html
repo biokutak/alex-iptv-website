@@ -282,18 +282,18 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')overlay.classList.re
 #alex-visit-counter strong{color:rgba(255,255,255,.94);font-size:13px;font-variant-numeric:tabular-nums}
 </style>
 <div id="alex-visit-counter" aria-label="Statistika poseta" role="status">
-  <span class="visit-stat">Ukupno poseta: <strong id="alex-total-visits">—</strong></span>
-  <span class="visit-stat">Današnje posete: <strong id="alex-today-visits">—</strong></span>
+  <span class="visit-stat"><span class="counter-dot" aria-hidden="true"></span>Ukupno poseta <strong id="alex-total-visits">Učitavanje…</strong></span>
+  <span class="visit-stat"><span class="counter-dot" aria-hidden="true"></span>Danas <strong id="alex-today-visits">Učitavanje…</strong></span>
 </div>
 <script>
 (function(){
   const total=document.getElementById('alex-total-visits');
   const today=document.getElementById('alex-today-visits');
   if(!total||!today)return;
-  fetch('/api/visit-stats',{cache:'no-store',credentials:'same-origin'})
+  fetch('https://alex-iptv-telegram.onrender.com/api/visit-stats',{cache:'no-store',credentials:'include'})
     .then(r=>{if(!r.ok)throw new Error('Statistika nije dostupna');return r.json()})
     .then(s=>{if(Number.isSafeInteger(s.total)&&Number.isSafeInteger(s.today)){total.textContent=s.total.toLocaleString('sr-RS');today.textContent=s.today.toLocaleString('sr-RS')}})
-    .catch(()=>{total.textContent='—';today.textContent='—'});
+    .catch(()=>{total.textContent='Nedostupno';today.textContent='Nedostupno';});
 })();
 </script>
 

@@ -15,11 +15,12 @@ app.use((req, res, next) => {
   if (origin === ALLOWED_ORIGIN) {
     res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
     res.setHeader('Vary', 'Origin');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   }
 
-  if (req.method === 'OPTIONS' && req.path === '/api/telegram-request') {
+  if (req.method === 'OPTIONS' && ['/api/telegram-request', '/api/visit-stats'].includes(req.path)) {
     if (origin !== ALLOWED_ORIGIN) return res.status(403).end();
     return res.status(204).end();
   }
@@ -79,7 +80,7 @@ app.get('/api/visit-stats', async (req, res) => {
     const countedToday = req.cookies?.alex_visit_date === today ||
       String(req.headers.cookie || '').split(';').some(part => part.trim() === `alex_visit_date=${today}`);
     if (!countedToday) {
-      res.setHeader('Set-Cookie', `alex_visit_date=${today}; Path=/; Max-Age=86400; HttpOnly; SameSite=Lax; Secure`);
+      res.setHeader('Set-Cookie', `alex_visit_date=${today}; Path=/; Max-Age=86400; HttpOnly; SameSite=None; Secure`);
     }
     const stats = await updateCounter(!countedToday);
     res.setHeader('Cache-Control', 'no-store');

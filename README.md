@@ -33,3 +33,8 @@ Bot token mora ostati u Render Environment Variables. Ne stavljajte ga u HTML il
 Brojač je deo isključivo ovog ALEX IPTV WEB SAJTA. Ne povezuje se sa IPTV panelom, IPTV korisnicima, kanalima niti pretplatama. Koristi zaseban fajl `visit-stats.json`.
 
 Za trajno čuvanje na Render-u, dodaj persistent disk ovom web servisu (mount path `/var/data`) i environment variable `COUNTER_DATA_DIR=/var/data`. Bez persistent diska, Render može obrisati lokalne podatke pri novom deploy-u ili restartu. Poseta iz istog pregledača broji se najviše jednom dnevno pomoću first-party cookie-ja; „ukupno” je zbir takvih dnevnih poseta, ne procena stvarnog broja različitih ljudi.
+
+
+## Važna napomena za brojač (ispravka V2)
+
+Početna stranica poziva `/api/visit-stats` na postojećem ALEX IPTV Telegram servisu `https://alex-iptv-telegram.onrender.com`, jer je javni sajt odvojen od API servisa. Zato se izmene `index.html` objavljuju na servisu sajta, a izmene `server.js` na postojećem Telegram API servisu. Ovo je i dalje isti ALEX IPTV sajt; ne koristi niti menja IPTV panel. Za trajno čuvanje brojača kroz redeploy/restart, podesiti persistent disk na Telegram API servisu sa mount path `/var/data` i `COUNTER_DATA_DIR=/var/data`.
