@@ -277,13 +277,85 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')overlay.classList.re
 </script>
 
 <style>
-#alex-visit-counter{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;padding:14px 12px 22px;margin:0 auto;color:rgba(255,255,255,.72);font:500 12px/1.5 system-ui,sans-serif;text-align:center}
-#alex-visit-counter .visit-stat{display:inline-flex;align-items:center;gap:7px}
-#alex-visit-counter strong{color:rgba(255,255,255,.94);font-size:13px;font-variant-numeric:tabular-nums}
+/* ALEX IPTV visit statistics — visual-only styling; counter logic unchanged */
+#alex-visit-counter{
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  width:min(100% - 32px, 470px);
+  margin:18px auto 22px;
+  padding:13px 15px;
+  color:#d8e6fa;
+  background:linear-gradient(135deg,rgba(7,24,46,.94),rgba(4,13,28,.92));
+  border:1px solid rgba(55,145,255,.28);
+  border-radius:13px;
+  box-shadow:0 8px 24px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.035);
+  font:500 12px/1.35 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  text-align:left;
+}
+#alex-visit-counter .counter-heading{
+  flex:0 0 100%;
+  margin:0 0 1px;
+  color:#8daed7;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  text-align:center;
+  text-transform:uppercase;
+}
+#alex-visit-counter .visit-stat{
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  flex:1 1 150px;
+  min-width:0;
+  padding:10px 12px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(133,177,230,.12);
+  border-radius:9px;
+}
+#alex-visit-counter .visit-icon{
+  display:grid;
+  place-items:center;
+  flex:0 0 30px;
+  width:30px;
+  height:30px;
+  color:#7dc4ff;
+  background:rgba(24,119,242,.14);
+  border:1px solid rgba(69,157,255,.2);
+  border-radius:8px;
+}
+#alex-visit-counter .visit-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
+#alex-visit-counter .visit-label{color:#a9bdd8;font-size:10px;white-space:nowrap}
+#alex-visit-counter strong{
+  color:#fff;
+  font-size:17px;
+  font-weight:750;
+  line-height:1.05;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:.2px;
+}
+@media(max-width:480px){
+  #alex-visit-counter{width:calc(100% - 24px);gap:7px;padding:11px;margin:14px auto 18px}
+  #alex-visit-counter .visit-stat{flex-basis:125px;padding:9px;gap:7px}
+  #alex-visit-counter .visit-icon{flex-basis:27px;width:27px;height:27px}
+  #alex-visit-counter strong{font-size:15px}
+}
 </style>
-<div id="alex-visit-counter" aria-label="Statistika poseta" role="status">
-  <span class="visit-stat"><span class="counter-dot" aria-hidden="true"></span>Ukupno poseta <strong id="alex-total-visits">Učitavanje…</strong></span>
-  <span class="visit-stat"><span class="counter-dot" aria-hidden="true"></span>Danas <strong id="alex-today-visits">Učitavanje…</strong></span>
+<div id="alex-visit-counter" aria-label="Statistika poseta sajtu" role="status" aria-live="polite">
+  <div class="counter-heading">Statistika sajta</div>
+  <div class="visit-stat">
+    <span class="visit-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 6-7"/></svg></span>
+    <span class="visit-copy"><span class="visit-label">Ukupno poseta</span><strong id="alex-total-visits">Učitavanje…</strong></span>
+  </div>
+  <div class="visit-stat">
+    <span class="visit-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/><path d="m9 15 2 2 4-4"/></svg></span>
+    <span class="visit-copy"><span class="visit-label">Posete danas</span><strong id="alex-today-visits">Učitavanje…</strong></span>
+  </div>
 </div>
 <script>
 (function(){
@@ -293,9 +365,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')overlay.classList.re
   fetch('https://alex-iptv-telegram.onrender.com/api/visit-stats',{cache:'no-store',credentials:'include'})
     .then(r=>{if(!r.ok)throw new Error('Statistika nije dostupna');return r.json()})
     .then(s=>{if(Number.isSafeInteger(s.total)&&Number.isSafeInteger(s.today)){total.textContent=s.total.toLocaleString('sr-RS');today.textContent=s.today.toLocaleString('sr-RS')}})
-    .catch(()=>{total.textContent='Nedostupno';today.textContent='Nedostupno';});
+    .catch(()=>{total.textContent='—';today.textContent='—';});
 })();
 </script>
-
 </body>
 </html>
